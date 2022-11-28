@@ -1,5 +1,4 @@
 { config, lib, pkgs, ... }:
-
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -33,10 +32,8 @@
 
   home.packages = with pkgs; [
     # Terminal
-    alacritty
     tmux
     zsh
-    antibody
     fzf
 
     # Launcher
@@ -65,6 +62,7 @@
 
     # Fonts
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
+
   ];
 
 
@@ -115,11 +113,24 @@
             program = "zsh";
           };
     };
+    package =
+      # Wrap alacritty with nixGL if exists
+      pkgs.writeShellScriptBin "alacritty" ''
+           #!/bin/sh
+
+           $(if type "nixGL" > /dev/null; then echo "nixGL"; fi) ${pkgs.alacritty}/bin/alacritty "$@"
+        '';
   };
-
-  # Configure git
-
-
+  xdg.enable = true;
+  xdg.desktopEntries = {
+    alacritty = {
+      name = "Alacritty";
+      genericName = "Terminal";
+      exec = "alacritty";
+      terminal = false;
+      categories = [ "Application" "System" "TerminalEmulator" ];
+    };
+  };
 
 
   # Variables
