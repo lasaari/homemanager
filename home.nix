@@ -135,7 +135,7 @@
       pkgs.writeShellScriptBin "alacritty" ''
            #!/bin/sh
 
-           $(if type "nixGL" > /dev/null; then echo "nixGL"; fi) ${pkgs.alacritty}/bin/alacritty "$@"
+           $(if type nixGL &> /dev/null; then echo "nixGL"; fi) ${pkgs.alacritty}/bin/alacritty "$@"
         '';
   };
   xdg.enable = true;
