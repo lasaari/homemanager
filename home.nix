@@ -14,6 +14,7 @@
   programs.zsh = {
       enable = true;
       enableAutosuggestions = true;
+      enableSyntaxHighlighting = true;
       enableCompletion = true;
       autocd = true;
       dotDir = ".config/zsh";
@@ -22,10 +23,25 @@
           update = "sudo nixos-rebuild switch";
           cat = "bat";
         };
-      plugins = with pkgs; [
-        
+      plugins = with pkgs; [        
+
+        {
+          name = "zsh-nix-shell";
+          file = "nix-shell.plugin.zsh";
+          src = pkgs.fetchFromGitHub {
+            owner = "chisui";
+            repo = "zsh-nix-shell";
+            rev = "v0.5.0";
+            sha256 = "0za4aiwwrlawnia4f29msk822rj9bgcygw6a8a6iikiwzjjz0g91";
+          };
+        }
 
       ];
+
+      initExtra = ''
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        source $HOME/.config/zsh/.p10k.zsh
+      '';
     };
 
 
@@ -38,6 +54,7 @@
     zsh
     antibody
     fzf
+    zsh-powerlevel10k
 
     # Launcher
     sway-launcher-desktop
@@ -125,6 +142,7 @@
   # Variables
   home.sessionVariables = {
       EDITOR = "nvim";
+      SHELL = "zsh";
     };
 
   services.syncthing = {
