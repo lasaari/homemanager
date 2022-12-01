@@ -74,8 +74,8 @@
     
     # Utilities 
     keepassxc
-    cloudflared
     bat
+    cloudflared
 
     # Fonts
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
@@ -153,7 +153,7 @@
   # Variables
   home.sessionVariables = {
       EDITOR = "nvim";
-      SHELL = "zsh";
+      # SHELL = "zsh";
     };
 
   services.syncthing = {
