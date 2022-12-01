@@ -1,4 +1,11 @@
 { config, lib, pkgs, ... }:
+let 
+
+  firefox-wrapped = pkgs.writeShellScriptBin "firefox" ''
+           #!/bin/sh
+           $(if type nixGL &> /dev/null; then echo "nixGL"; fi) ${pkgs.firefox}/bin/firefox
+        '';
+in
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -57,7 +64,7 @@
     sway-launcher-desktop
     
     # Browsers
-    firefox
+    firefox-wrapped
     chromium
 
     # IDE
@@ -146,7 +153,16 @@
       exec = "alacritty";
       terminal = false;
       categories = [ "Application" "System" "TerminalEmulator" ];
+      icon = ''${pkgs.alacritty}/share/icons/hicolor/scalable/apps/Alacritty.svg'';
     };
+    firefox = {
+        name = "Firefox Nix";
+        genericName = "Browser";
+        exec = "firefox";
+        terminal = false;
+        categories = [ "WebBrowser" "Network" ];
+        icon = ''${pkgs.firefox}/share/icons/hicolor/128x128/apps/firefox.png'';
+      };
   };
 
 
