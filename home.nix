@@ -26,7 +26,7 @@ in
       dotDir = ".config/zsh";
       shellAliases = {
           ll = "ls -lh";
-          update = "sudo nixos-rebuild switch";
+          update = "nix-channel --update && sudo nix-channel --update && sudo nixos-rebuild switch && home-manager switch";
           cat = "bat";
         };
       plugins = with pkgs; [        
@@ -169,7 +169,7 @@ in
   # Variables
   home.sessionVariables = {
       EDITOR = "nvim";
-      # SHELL = "zsh";
+      SHELL = ''${pkgs.zsh}/bin/zsh'';
     };
 
   services.syncthing = {
