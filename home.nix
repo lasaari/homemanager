@@ -3,7 +3,7 @@ let
 
   firefox-wrapped = pkgs.writeShellScriptBin "firefox" ''
            #!/bin/sh
-           $(if type nixGL &> /dev/null; then echo "nixGL"; fi) ${pkgs.firefox}/bin/firefox
+           $(if type nixGL &> /dev/null; then echo "nixGL"; fi) ${pkgs.firefox}/bin/firefox $@
         '';
 in
 {
@@ -17,6 +17,7 @@ in
   # when a new Home Manager release introduces backwards
   # incompatible changes.
 
+  nixpkgs.config.allowUnfree = true;
   programs.zsh = {
       enable = true;
       enableAutosuggestions = true;
@@ -26,7 +27,7 @@ in
       dotDir = ".config/zsh";
       shellAliases = {
           ll = "ls -lh";
-          update = "nix-channel --update && sudo nix-channel --update && sudo nixos-rebuild switch && home-manager switch";
+          update = "sudo nix-channel --update && nix-channel --update && sudo nixos-rebuild switch && home-manager switch";
           cat = "bat";
         };
       plugins = with pkgs; [        
@@ -72,8 +73,6 @@ in
     ripgrep
     tree-sitter
 
-
-
     # Dev tools
     gcc
     glibc.static
@@ -112,7 +111,7 @@ in
           env.TERM = "xterm-256color";
           window = {
 
-              decorations = "none";
+              decorations = "full";
             };
           font = {
             normal = {
@@ -134,7 +133,7 @@ in
             size = 12.00;
         };
         shell = {
-            program = "zsh";
+            program = ''${pkgs.zsh}/bin/zsh'';
           };
     };
     package =
@@ -158,7 +157,7 @@ in
     firefox = {
         name = "Firefox Nix";
         genericName = "Browser";
-        exec = "firefox";
+        exec = "firefox %U";
         terminal = false;
         categories = [ "WebBrowser" "Network" ];
         icon = ''${pkgs.firefox}/share/icons/hicolor/128x128/apps/firefox.png'';
@@ -170,6 +169,7 @@ in
   home.sessionVariables = {
       EDITOR = "nvim";
       SHELL = ''${pkgs.zsh}/bin/zsh'';
+      NIXPKGS_ALLOW_UNFREE = "1";
     };
 
   services.syncthing = {
