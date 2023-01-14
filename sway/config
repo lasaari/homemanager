@@ -18,10 +18,10 @@ set $term alacritty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
+for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
+set $menu exec $term --class=launcher -e sway-launcher-desktop
 
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
-
-set $menu dmenu_path | dmenu | xargs swaymsg exec --
 
 
 ### Output configuration
@@ -229,6 +229,10 @@ bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
 #
 
 output eDP-1 scale 1.5
+output eDP-1 pos 200 1440
+output 'Lenovo Group Limited LEN Y27q-20 0x0000374B' mode 2560x1440@120.000Hz 
+output 'Lenovo Group Limited LEN Y27q-20 0x0000374B' pos 0 0 
+
 #
 # Title bar
 #

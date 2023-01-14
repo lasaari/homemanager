@@ -68,6 +68,11 @@ in
     firefox-wrapped
     chromium
 
+    # Communication
+    thunderbird
+    discord
+    
+
     # IDE
     neovim
     ripgrep
@@ -85,6 +90,7 @@ in
 
     # Fonts
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
+
 
   ];
 
@@ -110,6 +116,7 @@ in
       settings = {
           env.TERM = "xterm-256color";
           window = {
+            opacity = 0.9;
 
               decorations = "full";
             };
@@ -172,13 +179,6 @@ in
       NIXPKGS_ALLOW_UNFREE = "1";
     };
 
-  services.syncthing = {
-    enable = true;
-    # dataDir = "/home/lasse";
-    # configDir = "/home/lasse/.config/syncthing";
-    # user = "lasse";
-
-  }; 
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
