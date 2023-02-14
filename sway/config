@@ -64,6 +64,8 @@ exec swayidle -w \
 
 input type:keyboard {
       xkb_layout fi
+      repeat_rate 35
+      repeat_delay 250
 }
 
 input type:touchpad {
