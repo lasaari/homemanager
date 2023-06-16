@@ -12,10 +12,13 @@ null_ls.setup {
   debug = false,
   sources = {
     formatting.prettier.with { extra_args = { "--no-semi", "--single-quote", "--jsx-single-quote" } },
-    formatting.black.with { extra_args = { "--fast", "--line-length=79" } },
+    formatting.black.with { extra_args = { "--fast", "--line-length=120" } },
     formatting.rustfmt,
     -- formatting.yapf,
     formatting.stylua,
-    diagnostics.pylint,
+    diagnostics.flake8,
+    formatting.gofmt,
+    formatting.goimports,
+    formatting.golines,
   },
 }

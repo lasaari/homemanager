@@ -91,6 +91,7 @@ return packer.startup(function(use)
   
   -- Git
   use "lewis6991/gitsigns.nvim"
+  use 'tpope/vim-fugitive'
 
   -- Put this at the end after all plugins
   if PACKER_BOOTSTRAP then
