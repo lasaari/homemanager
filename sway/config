@@ -19,7 +19,12 @@ set $term alacritty
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
-set $menu exec $term --class=launcher -e sway-launcher-desktop
+set $rofi_cmd rofi \
+        -terminal '$term'
+# Shows a combined list of the applications with desktop files and
+# executables from PATH.
+# TODO: add window with the next release of rofi-wayland
+set $menu $rofi_cmd -show combi -combi-modes drun#run -modes combi
 
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
 
@@ -27,7 +32,6 @@ set $menu exec $term --class=launcher -e sway-launcher-desktop
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
-output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
@@ -42,7 +46,8 @@ output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_19
 exec swayidle -w \
          timeout 180 'swaylock -f -c 000000' \
          timeout 240 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+         before-sleep 'swaylock -f -c 000000' 
+
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -218,14 +223,38 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Brightness
-bindsym XF86MonBrightnessDown exec light -U 10
-bindsym XF86MonBrightnessUp exec light -A 10
+set $brightness_notification_cmd  command -v notify-send >/dev/null && \
+        VALUE=$(light) && VALUE=${VALUE%%.*} && \
+        notify-send -e -h string:x-canonical-private-synchronous:brightness \
+            -h "int:value:$VALUE" -t 800 "Brightness: ${VALUE}%"
+
+bindsym XF86MonBrightnessDown exec \
+        'STEP="$brightness_step" && light -U ${STEP:-5} && $brightness_notification_cmd'
+bindsym XF86MonBrightnessUp exec \
+        'STEP="$brightness_step" && light -A ${STEP:-5} && $brightness_notification_cmd'
 
 # Volume
-bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +5%'
-bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -5%'
-bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
+set $volume_helper_cmd /usr/libexec/sway/volume-helper
 
+# Allow volume controls even if the screen is locked
+bindsym --locked {
+    XF86AudioRaiseVolume exec \
+        $volume_helper_cmd --limit "$volume_limit" --increase "$volume_step"
+    XF86AudioLowerVolume exec \
+        $volume_helper_cmd --limit "$volume_limit" --decrease "$volume_step"
+    XF86AudioMute    exec pactl set-sink-mute @DEFAULT_SINK@ toggle && $volume_helper_cmd
+    XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+}
+
+for_window [app_id="pavucontrol"] {
+    floating enable
+    move position center
+}
+
+for_window [app_id="pavucontrol-qt"] {
+    floating enable
+    move position center
+}
 #
 # displays
 #
@@ -258,5 +287,10 @@ bar {
         inactive_workspace #32323200 #32323200 #5c5c5c
     }
 }
+# bar {
+#     position top
+#     swaybar_command waybar
+# }
 
 include /etc/sway/config.d/*
+
